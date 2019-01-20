@@ -43,9 +43,10 @@ func convertToVirtualHost(dep *config.Dependency) (*route.VirtualHost, error) {
 	}
 
 	return &route.VirtualHost{
-		Name:    dep.GetName(),
-		Domains: []string{dep.GetName()},
-		Routes:  routes,
+		Name:            dep.GetName(),
+		Domains:         []string{dep.GetName()},
+		Routes:          routes,
+		PerFilterConfig: buildPerFilterConfig(dep),
 	}, nil
 }
 
@@ -103,6 +104,59 @@ func convertToRoutes(dep *config.Dependency, r *config.Route) ([]*route.Route, e
 	}
 
 	return rs, nil
+}
+
+func buildPerFilterConfig(dep *config.Dependency) map[string]*types.Struct {
+	perFilterConfig := make(map[string]*types.Struct)
+
+	for filterName, c := range dep.GetPerFilterConfig() {
+		switch filterName {
+		case "envoy.fault":
+			faultConfig := &types.Struct{
+				Fields: map[string]*types.Value{},
+			}
+
+			abort := c.GetAbort()
+			delay := c.GetDelay()
+
+			if abort != nil {
+				abortConfig := &types.Value{Kind: &types.Value_StructValue{StructValue: &types.Struct{
+					Fields: map[string]*types.Value{
+						"http_status": &types.Value{Kind: &types.Value_NumberValue{NumberValue: float64(abort.GetHttpStatus())}},
+						"percentage": &types.Value{Kind: &types.Value_StructValue{StructValue: &types.Struct{
+							Fields: map[string]*types.Value{
+								"numerator":   &types.Value{Kind: &types.Value_NumberValue{NumberValue: float64(abort.GetPercentage().GetNumerator())}},
+								"denominator": &types.Value{Kind: &types.Value_StringValue{StringValue: abort.GetPercentage().GetDenominator()}},
+							},
+						}}},
+					},
+				}}}
+				faultConfig.Fields["abort"] = abortConfig
+			}
+
+			if delay != nil {
+				delayConfig := &types.Value{Kind: &types.Value_StructValue{StructValue: &types.Struct{
+					Fields: map[string]*types.Value{
+						"type":        &types.Value{Kind: &types.Value_StringValue{StringValue: delay.GetType()}},
+						"fixed_delay": &types.Value{Kind: &types.Value_StringValue{StringValue: delay.GetFixedDelay().String()}},
+						"percentage": &types.Value{Kind: &types.Value_StructValue{StructValue: &types.Struct{
+							Fields: map[string]*types.Value{
+								"numerator":   &types.Value{Kind: &types.Value_NumberValue{NumberValue: float64(abort.GetPercentage().GetNumerator())}},
+								"denominator": &types.Value{Kind: &types.Value_StringValue{StringValue: abort.GetPercentage().GetDenominator()}},
+							},
+						}}},
+					},
+				}}}
+				faultConfig.Fields["delay"] = delayConfig
+			}
+
+			perFilterConfig[filterName] = faultConfig
+
+		default:
+		}
+	}
+
+	return perFilterConfig
 }
 
 func buildRoute(dep *config.Dependency, timeout *time.Duration, m route.RouteMatch, retryConfig *config.RetryPolicy) route.Route {

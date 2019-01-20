@@ -220,6 +220,8 @@ func (m *Dependency) Validate() error {
 
 	// no validation rules for HealthCheckPath
 
+	// no validation rules for PerFilterConfig
+
 	switch m.DiscoveryOption.(type) {
 
 	case *Dependency_Lb:
@@ -646,3 +648,321 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = OutlierDetectionValidationError{}
+
+// Validate checks the field values on FilterConfig with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *FilterConfig) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if v, ok := interface{}(m.GetDelay()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FilterConfigValidationError{
+				field:  "Delay",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetAbort()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FilterConfigValidationError{
+				field:  "Abort",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// FilterConfigValidationError is the validation error returned by
+// FilterConfig.Validate if the designated constraints aren't met.
+type FilterConfigValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FilterConfigValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FilterConfigValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FilterConfigValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FilterConfigValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FilterConfigValidationError) ErrorName() string { return "FilterConfigValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FilterConfigValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFilterConfig.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FilterConfigValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FilterConfigValidationError{}
+
+// Validate checks the field values on FaultDelay with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FaultDelay) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Type
+
+	if v, ok := interface{}(m.GetFixedDelay()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FaultDelayValidationError{
+				field:  "FixedDelay",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetPercentage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FaultDelayValidationError{
+				field:  "Percentage",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// FaultDelayValidationError is the validation error returned by
+// FaultDelay.Validate if the designated constraints aren't met.
+type FaultDelayValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FaultDelayValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FaultDelayValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FaultDelayValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FaultDelayValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FaultDelayValidationError) ErrorName() string { return "FaultDelayValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FaultDelayValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFaultDelay.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FaultDelayValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FaultDelayValidationError{}
+
+// Validate checks the field values on FaultAbort with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *FaultAbort) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for HttpStatus
+
+	if v, ok := interface{}(m.GetPercentage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FaultAbortValidationError{
+				field:  "Percentage",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// FaultAbortValidationError is the validation error returned by
+// FaultAbort.Validate if the designated constraints aren't met.
+type FaultAbortValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FaultAbortValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FaultAbortValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FaultAbortValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FaultAbortValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FaultAbortValidationError) ErrorName() string { return "FaultAbortValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FaultAbortValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFaultAbort.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FaultAbortValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FaultAbortValidationError{}
+
+// Validate checks the field values on FractionalPercent with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *FractionalPercent) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Numerator
+
+	// no validation rules for Denominator
+
+	return nil
+}
+
+// FractionalPercentValidationError is the validation error returned by
+// FractionalPercent.Validate if the designated constraints aren't met.
+type FractionalPercentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FractionalPercentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FractionalPercentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FractionalPercentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FractionalPercentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FractionalPercentValidationError) ErrorName() string {
+	return "FractionalPercentValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FractionalPercentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFractionalPercent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FractionalPercentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FractionalPercentValidationError{}
